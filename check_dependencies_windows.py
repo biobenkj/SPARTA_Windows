@@ -153,13 +153,13 @@ class CheckDependencies(object):
     def getdesktoppath(self):
         """Get the path to the desktop"""
 
-        desk_path = os.path.join(subprocess.Popen("%userprofile%", shell=True, stdout=subprocess.PIPE).stdout.readline().strip("\r\n"), "Desktop")
+        desk_path = os.path.join(subprocess.Popen("echo %userprofile%", shell=True, stdout=subprocess.PIPE).stdout.readline().strip("\r\n"), "Desktop")
         return desk_path
 
     def getSPARTAdir(self):
         """Attempt to figure out where SPARTA is located. Default should be Desktop"""
 
-        desk_path = os.path.join(subprocess.Popen("%userprofile%", shell=True, stdout=subprocess.PIPE).stdout.readline().strip("\r\n"), "Desktop")
+        desk_path = os.path.join(subprocess.Popen("echo %userprofile%", shell=True, stdout=subprocess.PIPE).stdout.readline().strip("\r\n"), "Desktop")
         #This is explicitly coded to ensure that the rest of the functions are able to find the appropriate binaries
         try:
             if os.path.lexists(os.path.join(desk_path, "SPARTA_Windows")):

@@ -3,7 +3,6 @@ __author__ = 'benkjohnson'
 import os
 import subprocess
 import numpy as np
-import re
 
 class DifferentialExpression(object):
     def __init__(self):
@@ -256,7 +255,7 @@ class DifferentialExpression(object):
 
         #Run the script
         #You have to run as super user to install edgeR
-        subprocess.Popen("sudo R --vanilla --slave < " + Rscriptloc, shell=True).wait()
+        subprocess.Popen("R --vanilla --slave < " + Rscriptloc, shell=True).wait()
 
         #Send a final notice to the user
         print "Analysis complete. Thank you for using SPARTA."

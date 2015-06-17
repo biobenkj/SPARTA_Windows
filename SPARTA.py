@@ -1,11 +1,11 @@
 __author__ = 'benkjohnson'
 
-import check_dependencies_linux
+import check_dependencies_windows
 import optparse
 import sys
 
 
-cd = check_dependencies_linux.CheckDependencies()
+cd = check_dependencies_windows.CheckDependencies()
 
 
 optParser = optparse.OptionParser(

@@ -147,7 +147,7 @@ class CheckDependencies(object):
     def getpwd(self):
         """Get present working directory"""
 
-        present_working_directory = subprocess.Popen("echo %cd%", stdout=subprocess.PIPE).communicate()[0].strip("\r\n")
+        present_working_directory = subprocess.Popen("echo %cd%", shell=True, stdout=subprocess.PIPE).communicate()[0].strip("\r\n")
         return present_working_directory
 
     def getdesktoppath(self):

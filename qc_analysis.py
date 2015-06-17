@@ -102,7 +102,7 @@ class QC_analysis(object):
         for file in os.listdir(datalocation):
             extension = file.split(".")[1]
             if extension == "fastq" or extension == "fq":
-                subprocess.Popen("java -jar trimmomatic-0.33.jar SE " + os.path.join(datalocation, file) + " " + os.path.join(analysislocation, "QC", "trimmed" + file) + " ILLUMINACLIP:" + cd.getpwd() + "/adapters/TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36", shell=True).wait()
+                subprocess.Popen("java -jar trimmomatic-0.33.jar SE " + os.path.join(datalocation, file) + " " + os.path.join(analysislocation, "QC", "trimmed" + file) + " ILLUMINACLIP:" + cd.getpwd().strip("C:") + "/adapters/TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36", shell=True).wait()
 
         return
 

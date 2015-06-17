@@ -3,6 +3,7 @@ __author__ = 'benkjohnson'
 import os
 import subprocess
 import numpy as np
+import re
 
 class DifferentialExpression(object):
     def __init__(self):
@@ -157,7 +158,8 @@ class DifferentialExpression(object):
                         varnames = varnames.strip().strip('\t')
                         varname = os.path.splitext(varnames)[0]
                         varname = varname[len('map'):]
-                        filepathname = os.path.join(analysislocation, 'DEanalysis', varnames)
+                        filepathname = os.path.join(analysislocation.strip("C:"), 'DEanalysis', varnames)
+                        filepathname = re.sub(r'\\', r'\\\\', filepathname)
                         de_expression.write("{varname}_{repnum} <- read.table('{filepathname}', row.names=1)\n".format(varname=varname, repnum=repnumcounter, filepathname=filepathname))
                         de_expression.write("colnames({varname}_{repnum}) <- '{varname}_{repnum}'\n".format(varname=varname, repnum=repnumcounter))
                         Rvarlst.append("{varname}_{repnum}".format(varname=varname, repnum=repnumcounter))
@@ -195,8 +197,9 @@ class DifferentialExpression(object):
             print "If there is large variation between library sizes, you may want to re-run the DE analysis with 'MDSmethod=BCV'"
 
             de_expression.write("y$samples\n")
-
-            de_expression.write("png('" + os.path.join(analysislocation, 'DEanalysis', 'MDSplot.png') + "')\n")
+            mdsfile = "png('" + os.path.join(analysislocation, 'DEanalysis', 'MDSplot.png') + "')\n"
+            mdsfile = re.sub(r'\\', r'\\\\', mdsfile)
+            de_expression.write(mdsfile)
             de_expression.write("plotMDS(y)\n")
             de_expression.write("dev.off()\n")
 
@@ -206,7 +209,9 @@ class DifferentialExpression(object):
             de_expression.write("y <- estimateGLMTrendedDisp(y, design)\n")
             de_expression.write("y <- estimateGLMTagwiseDisp(y, design)\n")
 
-            de_expression.write("png('" + os.path.join(analysislocation, 'DEanalysis', 'BCVplot.png') + "')\n")
+            bcvfile = "png('" + os.path.join(analysislocation, 'DEanalysis', 'BCVplot.png') + "')\n"
+            bcvfile = re.sub(r'\\', r'\\\\', bcvfile)
+            de_expression.write(bcvfile)
             de_expression.write("plotBCV(y)\n")
             de_expression.write("dev.off()\n")
 
@@ -221,12 +226,16 @@ class DifferentialExpression(object):
                 de_expression.write("summary(dt <- decideTestsDGE(lrt))\n")
                 de_expression.write("isDE <- as.logical(dt)\n")
                 de_expression.write("DEnames <- rownames(y)[isDE]\n")
-                de_expression.write("png('" + os.path.join(analysislocation, 'DEanalysis', 'ReferenceCondvsExpCond{condval}_scatter.png'.format(condval=condval)) + "')\n")
+                scatterfile = "png('" + os.path.join(analysislocation, 'DEanalysis', 'ReferenceCondvsExpCond{condval}_scatter.png'.format(condval=condval)) + "')\n"
+                scatterfile = re.sub(r'\\', r'\\\\', scatterfile)
+                de_expression.write(scatterfile)
                 de_expression.write("plotSmear(lrt, de.tags=DEnames, cex=0.5)\n")
                 de_expression.write("abline(h=c(-1,1), col='blue')\n")
                 de_expression.write("dev.off()\n")
                 de_expression.write("outfile <- cbind(cpm(y), lrt$table, FDR)\n")
-                de_expression.write("write.csv(outfile, file='" + os.path.join(analysislocation, 'DEanalysis', 'ReferenceCondvsExpCond{condval}_DE.csv'.format(condval=condval)) + "')\n")
+                csvoutfile = "write.csv(outfile, file='" + os.path.join(analysislocation, 'DEanalysis', 'ReferenceCondvsExpCond{condval}_DE.csv'.format(condval=condval)) + "')\n"
+                csvoutfile = re.sub(r'\\', r'\\\\', csvoutfile)
+                de_expression.write(csvoutfile)
                 condval += 1
 
             for contr in contrast:
@@ -239,12 +248,16 @@ class DifferentialExpression(object):
                 de_expression.write("summary(dt <- decideTestsDGE(lrt))\n")
                 de_expression.write("isDE <- as.logical(dt)\n")
                 de_expression.write("DEnames <- rownames(y)[isDE]\n")
-                de_expression.write("png('" + os.path.join(analysislocation, 'DEanalysis', 'ExpCond{reftrt}vsExpCond{exptrt}_scatter.png'.format(reftrt=reftrt, exptrt=exptrt)) + "')\n")
+                scatterfile = "png('" + os.path.join(analysislocation, 'DEanalysis', 'ExpCond{reftrt}vsExpCond{exptrt}_scatter.png'.format(reftrt=reftrt, exptrt=exptrt)) + "')\n"
+                scatterfile = re.sub(r'\\', r'\\\\', scatterfile)
+                de_expression.write(scatterfile)
                 de_expression.write("plotSmear(lrt, de.tags=DEnames, cex=0.5)\n")
                 de_expression.write("abline(h=c(-1,1), col='blue')\n")
                 de_expression.write("dev.off()\n")
                 de_expression.write("outfile <- cbind(cpm(y), lrt$table, FDR)\n")
-                de_expression.write("write.csv(outfile, file='" + os.path.join(analysislocation, 'DEanalysis', 'ExpCond{reftrt}vsExpCond{exptrt}_DE.csv'.format(reftrt=reftrt, exptrt=exptrt)) + "')\n")
+                csvoutfile = "write.csv(outfile, file='" + os.path.join(analysislocation, 'DEanalysis', 'ExpCond{reftrt}vsExpCond{exptrt}_DE.csv'.format(reftrt=reftrt, exptrt=exptrt)) + "')\n"
+                csvoutfile = re.sub(r'\\', r'\\\\', csvoutfile)
+                de_expression.write(csvoutfile)
         return
 
     def runRscript(self, analysislocation):

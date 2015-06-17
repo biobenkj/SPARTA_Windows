@@ -36,7 +36,8 @@ class Mapping_and_Counting(object):
             if extension == "gz":
                 subprocess.Popen("gzip -dc " + os.path.join(analysislocation, "QC", file) + " > " + os.path.join(analysislocation, "Bowtie", os.path.splitext(file)[0]), shell=True).wait()
         print "Building the Bowtie index from the reference genome"
-        subprocess.Popen("./bowtie-build -q -f " + glob.glob(os.path.join(analysislocation, "Bowtie") + "/*.fa*")[0] + " " + glob.glob(os.path.join(analysislocation, "Bowtie") + "/*.fa*")[0].split(".")[0], shell=True).wait()
+        #This could be a problem... Have the user specify if the index is large or small
+        subprocess.Popen(".\\bowtie-build-s.exe -q -f " + glob.glob(os.path.join(analysislocation, "Bowtie") + "/*.fa*")[0] + " " + glob.glob(os.path.join(analysislocation, "Bowtie") + "/*.fa*")[0].split(".")[0], shell=True).wait()
         allebwtfiles = glob.glob("*.ebwt")[:]
         for ebwtfile in allebwtfiles:
             copy(ebwtfile, os.path.join(analysislocation, "Bowtie"))
@@ -47,7 +48,8 @@ class Mapping_and_Counting(object):
             if extension == ".fq" or extension == ".fastq":
                 fname = os.path.splitext(file)[0]
                 strippedfile = fname[len('trimmed'):]
-                subprocess.Popen("./bowtie -S " + glob.glob(os.path.join(analysislocation, "Bowtie") + "/*.fa*")[0].split(".")[0] + " " + os.path.join(analysislocation, "Bowtie", file) + " > " + os.path.join(analysislocation, "Bowtie", "align" + strippedfile + ".sam"), shell=True).wait()
+                #Again this could be a problem, have the user define whether the index is large or small
+                subprocess.Popen(".\\bowtie-align-s.exe -S " + glob.glob(os.path.join(analysislocation, "Bowtie") + "/*.fa*")[0].split(".")[0] + " " + os.path.join(analysislocation, "Bowtie", file) + " > " + os.path.join(analysislocation, "Bowtie", "align" + strippedfile + ".sam"), shell=True).wait()
             # elif extension == ".fastq":
             #     fname = os.path.splitext(file)[0]
             #     strippedfile = fname[len('trimmed'):]

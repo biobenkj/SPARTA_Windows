@@ -146,6 +146,7 @@ class DifferentialExpression(object):
         #Writing this all is going to be rather difficult...
 
         with open(os.path.join(analysislocation, 'DEanalysis', 'DEexpression.r'), "w") as de_expression:
+            de_expression.write("Sys.getenv('R_LIBS_USER')\n")
             de_expression.write("source('http://bioconductor.org/biocLite.R')\n")
             de_expression.write("biocLite('edgeR')\n")
             de_expression.write("library('edgeR')\n")

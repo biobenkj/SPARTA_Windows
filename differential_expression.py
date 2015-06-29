@@ -273,7 +273,8 @@ class DifferentialExpression(object):
         #Temporarily assign a local library with which to use
 
         spartadir = check_dependencies_windows.CheckDependencies.getSPARTAdir()
-        subprocess.Popen("set R_LIBS_USER {spartadir}\R_local\library_local".format(spartadir=spartadir), shell=True).wait()
+        locallibpath = os.path.join(spartadir, "R_local", "library_local")
+        subprocess.Popen("set R_LIBS_USER {locallibpath}".format(locallibpath=locallibpath), shell=True).wait()
 
         #Run the script
         #You have to run as super user to install edgeR

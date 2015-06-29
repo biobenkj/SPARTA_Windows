@@ -4,6 +4,7 @@ import os
 import subprocess
 import numpy as np
 import re
+import check_dependencies_windows
 
 class DifferentialExpression(object):
     def __init__(self):
@@ -266,6 +267,13 @@ class DifferentialExpression(object):
 
         #Read in the pre-written R script from the DEanalysis folder
         Rscriptloc = os.path.join(analysislocation, 'DEanalysis', 'DEexpression.r')
+
+        #Define the local library location with which to install edgeR
+        #The main library is not able to be written to without running as administrator
+        #Temporarily assign a local library with which to use
+
+        spartadir = check_dependencies_windows.CheckDependencies.getSPARTAdir()
+        subprocess.Popen("set R_LIBS_USER {spartadir}\R_local\library_local".format(spartadir=spartadir), shell=True).wait()
 
         #Run the script
         #You have to run as super user to install edgeR

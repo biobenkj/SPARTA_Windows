@@ -268,14 +268,6 @@ class DifferentialExpression(object):
         #Read in the pre-written R script from the DEanalysis folder
         Rscriptloc = os.path.join(analysislocation, 'DEanalysis', 'DEexpression.r')
 
-        #Define the local library location with which to install edgeR
-        #The main library is not able to be written to without running as administrator
-        #Temporarily assign a local library with which to use
-
-        spartadir = check_dependencies_windows.CheckDependencies.getSPARTAdir()
-        locallibpath = os.path.join(spartadir, "R_local", "library_local")
-        subprocess.Popen("set R_LIBS_USER {locallibpath}".format(locallibpath=locallibpath), shell=True).wait()
-
         #Run the script
         #You have to run as super user to install edgeR
         subprocess.Popen("R --vanilla --slave < " + Rscriptloc, shell=True).wait()

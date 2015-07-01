@@ -89,7 +89,7 @@ class QC_analysis(object):
             quit()
         return genomefeaturefile, referencegenome
 
-    def trimmomatic(self, datalocation, analysislocation):
+    def trimmomatic(self, datalocation, analysislocation, options):
         """Run trimmomatic for SE reads and add the file prefix
         'trim' to the file name."""
 
@@ -102,12 +102,12 @@ class QC_analysis(object):
         for file in os.listdir(datalocation):
             extension = file.split(".")[1]
             if extension == "fastq" or extension == "fq":
-                subprocess.Popen("java -jar trimmomatic-0.33.jar SE " + os.path.join(datalocation, file) + " " + os.path.join(analysislocation, "QC", "trimmed" + file) + " ILLUMINACLIP:" + cd.getpwd().strip("C:") + "/adapters/TruSeq3-SE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36", shell=True).wait()
+                subprocess.Popen("java -jar trimmomatic-0.33.jar SE -threads {threads} ".format(threads=options.threads) + os.path.join(datalocation, file) + " " + os.path.join(analysislocation, "QC", "trimmed" + file) + " ILLUMINACLIP:" + cd.getpwd().strip("C:") + "/adapters/{illuminaclip} LEADING:{leading} TRAILING:{trailing} SLIDINGWINDOW:{slidingwindow} MINLEN:{minlen}".format(illuminaclip=options.illuminaclip, leading=options.leading, trailing=options.trailing, slidingwindow=options.slidingwindow, minlen=options.minlentrim), shell=True).wait()
 
         return
 
-    def fastqc(self, datalocation, analysislocation):
-        """Run FastQC for trimmed data files."""
+    def fastqc(self, datalocation, analysislocation, options):
+        """This module does NOT work non-interactively on Windows."""
 
         cd = check_dependencies_windows.CheckDependencies()
         os.chdir(os.path.join(cd.getSPARTAdir(), "QC_analysis"))

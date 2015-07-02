@@ -203,7 +203,7 @@ class CheckDependencies(object):
                             if line.startswith("Data"):
                                 dataloc = paramlst[0].strip()
                                 inputname = paramlst[-1].strip()
-                                data_path = os.path.join(subprocess.Popen("echo %userprofile%", shell=True, stdout=subprocess.PIPE).stdout.readline().strip("\n"), dataloc, inputname)
+                                data_path = os.path.join(subprocess.Popen("echo %userprofile%", shell=True, stdout=subprocess.PIPE).stdout.readline().strip("\r\n"), dataloc, inputname)
                             elif line.startswith("Trimmomatic"):
                                 try:
                                     options.threads = paramlst[0].strip().split("=")[1]

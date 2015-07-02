@@ -67,17 +67,19 @@ optParser.add_option_group(htseq)
 
 # args = parser.parse_args()
 
-#Welcome the user to the software and check dependencies
-
-print "Welcome to SPARTA!"
-print "Let's make sure we have everything we need to get started..."
-print "Now checking dependencies...\n"
+if options.noninteractive:
+    cond_lst, data_path = cd.parseConfigFile(options)
+else:
+    #Welcome the user to the software and check dependencies
+    print "Welcome to SPARTA!"
+    print "Let's make sure we have everything we need to get started..."
+    print "Now checking dependencies...\n"
 
 #Check for Java, R, and NumPy
 
 javacheck = cd.checkjava()
 Rcheck = cd.checkR()
-numpycheck = cd.checknumpy()
+numpycheck = cd.checknumpy(options)
 # matplotlibcheck = cd.checkmatplotlib()
 
 #If NumPy can't be found, SPARTA will attempt to download and install it
@@ -87,8 +89,8 @@ if numpycheck == False:
     answer = cd.getanswerstate()
     if answer:
         if numpycheck == False:
-            cd.getNumPy()
-            cd.installNumPy()
+            cd.getNumPy(options)
+            cd.installNumPy(options)
         # elif numpycheck == False and matplotlibcheck == True:
         #     cd.getNumPy()
         #     cd.installNumPy()
@@ -106,37 +108,67 @@ qc = qc_analysis.QC_analysis()
 mac = mapping_and_counting.Mapping_and_Counting()
 de = differential_expression.DifferentialExpression()
 
-#Create a folder called RNAseq_Data with which to store all of the data analysis
+if options.noninteractive:
+    #Create a folder called RNAseq_Data with which to store all of the data analysis
 
-subfolderpath = qc.create_folder()
+    subfolderpath = qc.create_folder()
 
-#Find the RNAseq data folder location
+    #Read in the data and sort out the genome feature file and genome sequence files
 
-rawdatapath = qc.finddata()
+    qc.findreferencefiles(data_path)
 
-#Read in the data and sort out the genome feature file and genome sequence files
+    #Trimmomatic
 
-qc.findreferencefiles(rawdatapath)
+    qc.trimmomatic(data_path, subfolderpath, options)
 
-#Trimmomatic
+    #FastQC
 
-qc.trimmomatic(rawdatapath, subfolderpath, options)
+    qc.fastqc(data_path, subfolderpath, options)
 
-#FastQC will not run non-interactively on Windows
+    #Bowtie
 
-#qc.fastqc(rawdatapath, subfolderpath, options)
+    mac.bowtie(data_path, subfolderpath, options)
 
-#Bowtie
+    #HTSeq
 
-mac.bowtie(rawdatapath, subfolderpath, options)
+    mac.htseq(subfolderpath, options)
 
-#HTSeq
+    #edgeR
 
-mac.htseq(subfolderpath, options)
+    de.de_analysis_noninteractive(subfolderpath, cond_lst)
 
-#edgeR
+else:
+    #Create a folder called RNAseq_Data with which to store all of the data analysis
 
-de.de_analysis(subfolderpath)
+    subfolderpath = qc.create_folder()
+
+    #Find the RNAseq data folder location
+
+    rawdatapath = qc.finddata()
+
+    #Read in the data and sort out the genome feature file and genome sequence files
+
+    qc.findreferencefiles(rawdatapath)
+
+    #Trimmomatic
+
+    qc.trimmomatic(rawdatapath, subfolderpath, options)
+
+    #FastQC
+
+    qc.fastqc(rawdatapath, subfolderpath, options)
+
+    #Bowtie
+
+    mac.bowtie(rawdatapath, subfolderpath, options)
+
+    #HTSeq
+
+    mac.htseq(subfolderpath, options)
+
+    #edgeR
+
+    de.de_analysis(subfolderpath)
 
 
 

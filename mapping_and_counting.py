@@ -26,7 +26,7 @@ class Mapping_and_Counting(object):
         copy(gff, os.path.join(analysislocation, 'HTSeq'))
         # subprocess.Popen("cp " + genref + " " + analysislocation + "/Bowtie", shell=True).wait()
         # subprocess.Popen("cp " + gff + " " + analysislocation + "/HTSeq", shell=True).wait()
-        os.chdir(os.path.join(cd.getSPARTAdir(), "Mapping_and_counting"))
+        os.chdir(os.path.join(cd.getSPARTAdir(options), "Mapping_and_counting"))
         # os.chdir(cd.getSPARTAdir() + "/Mapping_and_counting")
         # if not os.path.lexists(os.path.join(cd.getSPARTAdir(), "Mapping_and_counting", "bowtie-1.1.1")):
         #     #This will be a problem for Windows users. Distribute with unzipped binaries?
@@ -80,7 +80,7 @@ class Mapping_and_Counting(object):
         """Run htseq-count to count gene features post-Bowtie mapping"""
 
         cd = check_dependencies_windows.CheckDependencies()
-        os.chdir(os.path.join(cd.getSPARTAdir(), "Mapping_and_counting"))
+        os.chdir(os.path.join(cd.getSPARTAdir(options), "Mapping_and_counting"))
         gff = glob.glob(os.path.join(analysislocation, "HTSeq") + "/*.g*")[0]
         print "Counting gene features with HTSeq"
         for mapfile in os.listdir(os.path.join(analysislocation, "Bowtie")):

@@ -180,6 +180,7 @@ class DifferentialExpression(object):
             Rvarlstjoin = ",".join(Rvarlst)
             de_expression.write("alldata <- cbind(" + Rvarlstjoin + ")\n")
 
+            Rgrouplengths = []
             Rgrouplst = []
             repnum = 1
             for treatments in range(len(conditions_list)):
@@ -187,6 +188,7 @@ class DifferentialExpression(object):
                     if treatments != len(conditions_list)+1 and conditions_list[treatments][group] != '':
                         Rgrouplst.append(repnum)
                 repnum += 1
+                Rgrouplengths.append(len(Rgrouplst)) #eventually use this to try and test for batch effects in n-conditions
             Rgrouplst = map(str, Rgrouplst)
             Rgrouplstjoin = ",".join(Rgrouplst)
             de_expression.write("group <- factor(c(" + Rgrouplstjoin + "))\n")
@@ -212,8 +214,14 @@ class DifferentialExpression(object):
             mdsfile = "png('" + os.path.join(analysislocation, 'DEanalysis', 'MDSplot.png') + "')\n"
             mdsfile = re.sub(r'\\', r'\\\\', mdsfile)
             de_expression.write(mdsfile)
-            de_expression.write("plotMDS(y)\n")
+            de_expression.write("mymdsobj <- plotMDS(y)\n")
             de_expression.write("dev.off()\n")
+            #Batch effect test: compare the first two samples of the conditions tested based on MDS plot
+            #Reasoning: if the first two samples
+            batcheffectTestIdxA, batcheffectTestIdxB = (Rgrouplengths[0] - Rgrouplengths[0]) + 1, (Rgrouplengths[1] - Rgrouplengths[0]) + 1
+            de_expression.write("ifelse((mymdsobj$cmdscale.out[{batcheffectTestIdxA}, {batcheffectTestIdxA}] > 0) == (mymdsobj$cmdscale.out[{batcheffectTestIdxB}, {batcheffectTestIdxA}] > 0), 'IMPORTANT! YOU MAY HAVE A BATCH EFFECT! PLEASE LOOK AT THE MDS PLOT!', 'All appears to be well')\n".format(batcheffectTestIdxA=batcheffectTestIdxA, batcheffectTestIdxB=batcheffectTestIdxB))
+            de_expression.write("Sys.sleep(10)\n") #Give time for the user to read the message
+            #End of batch effect test
 
             de_expression.write("design <- model.matrix(~group)\n")
 

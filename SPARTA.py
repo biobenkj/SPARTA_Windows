@@ -123,7 +123,7 @@ if options.noninteractive:
 
     #FastQC
 
-    qc.fastqc(data_path, subfolderpath, options)
+    # qc.fastqc(data_path, subfolderpath, options)
 
     #Bowtie
 
@@ -156,7 +156,7 @@ else:
 
     #FastQC
 
-    qc.fastqc(rawdatapath, subfolderpath, options)
+    # qc.fastqc(rawdatapath, subfolderpath, options)
 
     #Bowtie
 

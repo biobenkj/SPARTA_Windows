@@ -223,12 +223,6 @@ class DifferentialExpression(object):
             de_expression.write(mdsfile)
             de_expression.write("mymdsobj <- plotMDS(y)\n")
             de_expression.write("dev.off()\n")
-            #Batch effect test: compare the first two samples of the conditions tested based on MDS plot
-            #Reasoning: if the first two samples
-            batcheffectTestIdxA, batcheffectTestIdxB = (Rgrouplengths[0] - Rgrouplengths[0]) + 1, (Rgrouplengths[1] - Rgrouplengths[0]) + 1
-            de_expression.write("ifelse((mymdsobj$cmdscale.out[{batcheffectTestIdxA}, {batcheffectTestIdxA}] > 0) == (mymdsobj$cmdscale.out[{batcheffectTestIdxB}, {batcheffectTestIdxA}] > 0), 'IMPORTANT! YOU MAY HAVE A BATCH EFFECT! PLEASE LOOK AT THE MDS PLOT!', 'All appears to be well')\n".format(batcheffectTestIdxA=batcheffectTestIdxA, batcheffectTestIdxB=batcheffectTestIdxB))
-            de_expression.write("Sys.sleep(10)\n") #Give time for the user to read the message
-            #End of batch effect test
 
             de_expression.write("design <- model.matrix(~group)\n")
 
@@ -289,6 +283,16 @@ class DifferentialExpression(object):
                     csvoutfile = "write.csv(outfile, file='" + os.path.join(analysislocation, 'DEanalysis', 'ExpCond{reftrt}vsExpCond{exptrt}_DE.csv'.format(reftrt=reftrt, exptrt=exptrt)) + "')\n"
                     csvoutfile = re.sub(r'\\', r'\\\\', csvoutfile)
                     de_expression.write(csvoutfile)
+            #Batch effect test: compare the first two samples of the conditions tested based on MDS plot
+            #Reasoning: if the first two samples
+            grouplen = len(Rgrouplengths)
+            batchcounter = 1
+            while batchcounter != grouplen:
+                batcheffectTestIdxA, batcheffectTestIdxB = (Rgrouplengths[0] - Rgrouplengths[0]) + 1, (Rgrouplengths[batchcounter] - Rgrouplengths[0]) + 1
+                de_expression.write("ifelse((mymdsobj$cmdscale.out[{batcheffectTestIdxA}, {batcheffectTestIdxA}] > 0) == (mymdsobj$cmdscale.out[{batcheffectTestIdxB}, {batcheffectTestIdxA}] > 0), 'Reference vs. Experimental {batchcounter}: Potential batch effect', 'Reference vs. Experimental {batchcounter}: All appears to be well')\n".format(batcheffectTestIdxA=batcheffectTestIdxA, batcheffectTestIdxB=batcheffectTestIdxB, batchcounter=batchcounter + 1))
+                batchcounter += 1
+            #End of batch effect test
+
         return
 
     def runRscript(self, analysislocation):

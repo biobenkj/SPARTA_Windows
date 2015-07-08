@@ -94,13 +94,11 @@ class QC_analysis(object):
         'trim' to the file name."""
 
         cd = check_dependencies_windows.CheckDependencies()
-
+        os.chdir(os.path.join(cd.getSPARTAdir(options), "QC_analysis"))
         if not os.path.lexists(os.path.join(cd.getSPARTAdir(options), "QC_analysis", "Trimmomatic-0.33")):
-            print "Uh oh. Can't find Trimmomatic. Make sure it is in the SPARTA_Windows -> QC_analysis folder. Quitting"
-            quit()
-        else:
-            os.chdir(os.path.join(cd.getSPARTAdir(options), "QC_analysis", "Trimmomatic-0.33"))
-
+            #This will be a problem for Windows. Just distribute with unzipped binaries?
+            subprocess.call(["unzip", "Trimmomatic-0.33.zip"], stdout=open(os.devnull, 'wb'))
+        os.chdir(os.path.join(cd.getpwd(), "Trimmomatic-0.33"))
         for file in os.listdir(datalocation):
             extension = file.split(".")[1]
             if extension == "fastq" or extension == "fq":
@@ -112,13 +110,11 @@ class QC_analysis(object):
         """This module does NOT work non-interactively on Windows."""
 
         cd = check_dependencies_windows.CheckDependencies()
-
-        if not os.path.lexists(os.path.join(cd.getSPARTAdir(options), "QC_analysis", "Trimmomatic-0.33")):
-            print "Uh oh. Can't find FastQC. Make sure it is in the SPARTA_Windows -> QC_analysis folder. Quitting"
-            quit()
-        else:
-            os.chdir(os.path.join(cd.getSPARTAdir(options), "QC_analysis", "FastQC"))
-
+        os.chdir(os.path.join(cd.getSPARTAdir(options), "QC_analysis"))
+        if not os.path.lexists(cd.getSPARTAdir(options) + "/QC_analysis/FastQC"):
+            subprocess.call(["unzip", "fastqc_v0.11.3.zip"], stdout=open(os.devnull, 'wb'))
+        os.chdir(os.path.join(cd.getpwd(), "FastQC"))
+        # subprocess.call("chmod 755 fastqc", shell=True)
         for file in os.listdir(datalocation):
             extension = file.split(".")[1]
             if extension == "fastq" or extension == "fq":

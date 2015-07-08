@@ -24,14 +24,13 @@ class Mapping_and_Counting(object):
         copy(genref, os.path.join(analysislocation, 'Bowtie'))
         genrefname = genref.split("/")[-1]
         copy(gff, os.path.join(analysislocation, 'HTSeq'))
-        # subprocess.Popen("cp " + genref + " " + analysislocation + "/Bowtie", shell=True).wait()
-        # subprocess.Popen("cp " + gff + " " + analysislocation + "/HTSeq", shell=True).wait()
-        os.chdir(os.path.join(cd.getSPARTAdir(options), "Mapping_and_counting"))
-        # os.chdir(cd.getSPARTAdir() + "/Mapping_and_counting")
-        # if not os.path.lexists(os.path.join(cd.getSPARTAdir(), "Mapping_and_counting", "bowtie-1.1.1")):
-        #     #This will be a problem for Windows users. Distribute with unzipped binaries?
-        #     subprocess.call(["unzip", "bowtie-1.1.1-linux-x86_64.zip"], stdout=open(os.devnull, 'wb'))
-        os.chdir(os.path.join(cd.getpwd(), "bowtie-1.1.1"))
+
+        if not os.path.lexists(os.path.join(cd.getSPARTAdir(options), "Mapping_and_counting", "bowtie-1.1.1")):
+            print "Uh oh. Can't find Bowtie. Make sure it is in the SPARTA_Windows -> Mapping_and_counting folder. Quitting"
+            quit()
+        else:
+            os.chdir(os.path.join(cd.getSPARTAdir(options), "Mapping_and_counting", "bowtie-1.1.1"))
+
         for file in os.listdir(os.path.join(analysislocation, "QC")):
             extension = file.split(".")[-1]
             if extension == "gz":

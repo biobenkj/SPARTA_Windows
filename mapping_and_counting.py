@@ -22,7 +22,7 @@ class Mapping_and_Counting(object):
         qc = qc_analysis.QC_analysis()
         gff, genref = qc.findreferencefiles(datalocation)
         copy(genref, os.path.join(analysislocation, 'Bowtie'))
-        genrefname = genref.split("/")[-1]
+        genrefname = genref.split("\\")[-1]
         copy(gff, os.path.join(analysislocation, 'HTSeq'))
         # subprocess.Popen("cp " + genref + " " + analysislocation + "/Bowtie", shell=True).wait()
         # subprocess.Popen("cp " + gff + " " + analysislocation + "/HTSeq", shell=True).wait()
